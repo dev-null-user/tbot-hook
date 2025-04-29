@@ -1,5 +1,4 @@
 const telegramService = require('../services/telegram');
-const webhookService = require('../services/webhook');
 const Controller = require('./controller');
 const webhookValidator = require('../validator/webhook/handleWebhookValidator');
 
@@ -12,7 +11,6 @@ class WebhookController extends Controller {
   async handleWebhook(req, res) {
 
     try {
-      // Валидация параметров запроса
       const paramsValidation = webhookValidator.validateParams(req.params);
       if (!paramsValidation.isValid) {
           return this.apiError(
@@ -40,13 +38,8 @@ class WebhookController extends Controller {
 
       const payload = req.body;
       const message = payload.message;
-
-
-      // Обработка webhook данных через сервис
-      const formattedMessage = await webhookService.processWebhookData(topic, message);
       
-      // Отправка сообщения в Telegram
-      await telegramService.sendMessage(chatId, formattedMessage);
+      await telegramService.sendMessage(chatId, message);
 
       return res.json({ 
         success: true, 

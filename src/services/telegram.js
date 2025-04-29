@@ -7,8 +7,16 @@ class TelegramService {
 
   async sendMessage(chatId, message) {
     try {
+      let message_thread_id = null;
+      let partsIds = chatId.split(':');
+
+      if (partsIds.length > 1) {
+        message_thread_id = partsIds[1];
+      }
+
       const result = await this.bot.sendMessage(chatId, message, { 
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
+        message_thread_id
       });
       return result;
     } catch (error) {
