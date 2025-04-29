@@ -5,6 +5,13 @@ class Controller {
             'message': message
         });
     }
+
+    apiSuccess(res, message) {
+        return res.json({
+            'success': true,
+            'message': message
+        });
+    }
 }
 
 module.exports = Controller;
