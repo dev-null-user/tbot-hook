@@ -11,6 +11,15 @@ class WebhookController extends Controller {
   async handleWebhook(req, res) {
 
     try {
+
+      const paramsAccessApikey = webhookValidator.validateWebhookApiSecury(req.headers);
+      if (!paramsAccessApikey.isValid) {
+          return this.apiError(
+              res, 
+              `Invalid apikey: ${paramsAccessApikey.errors.join(', ')}`
+          );
+      }
+
       const paramsValidation = webhookValidator.validateParams(req.params);
       if (!paramsValidation.isValid) {
           return this.apiError(

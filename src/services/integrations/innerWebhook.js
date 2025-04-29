@@ -9,6 +9,10 @@ class InnerWebhook {
         try {
             const response = await axios.post(this.host + '/webhook/' + process.env.INNER_TOPIC, {
                 message: message
+            }, {
+                headers: {
+                    apikey: process.env.INTERNAL_API_KEY
+                }
             });
             return response.data;
         } catch (error) {

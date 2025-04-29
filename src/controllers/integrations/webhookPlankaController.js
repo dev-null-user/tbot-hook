@@ -2,6 +2,8 @@ const Controller = require('../controller');
 const Planka = require('../../services/integrations/planka')
 const InnerWebhook = require('../../services/integrations/innerWebhook');
 
+const webhookValidator = require('../../validator/webhook/handleWebhookValidator');
+
 class WebhookPlankaController extends Controller {
     constructor() {
         super();
@@ -12,6 +14,14 @@ class WebhookPlankaController extends Controller {
 
     async handleWebhook(req, res) {
         try {
+
+            const paramsAccessAuthBearer = webhookValidator.validateWebhookAuthBearer(req.headers);
+            if (!paramsAccessAuthBearer.isValid) {
+                return this.apiError(
+                    res, 
+                    `Invalid apikey: ${paramsAccessAuthBearer.errors.join(', ')}`
+                );
+            }      
 
             const formatData = await this.planka.formatData(req.body);
 
@@ -31,7 +41,6 @@ class WebhookPlankaController extends Controller {
 
             this.innerWebhook.sendWebhookTelegram(messageFull());
             
-
             return this.apiSuccess(res, 'Ok');
 
         } catch (error) {
